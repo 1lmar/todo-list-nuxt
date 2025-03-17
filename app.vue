@@ -1,69 +1,55 @@
 <template>
+  <div v-if="isLoading" class="spinner">
+    <div class="spinner-circle"></div>
+  </div>
   <div class="todo-app">
-    <h1>Todo List</h1>
-
-    <!-- Добавление задачи -->
-    <a-input
-      v-model:value="newTask"
-      placeholder="Введите новую задачу"
-      style="width: 300px; margin-right: 10px"
-    />
-    <a-button type="primary" @click="addTask">Добавить</a-button>
-
-    <!-- Список задач -->
-    <a-list
-      v-if="tasks.length > 0"
-      :data-source="tasks"
-      style="margin-top: 20px"
-    >
-      <template #renderItem="{ item }">
-        <a-list-item>
-          <a-checkbox v-model:checked="item.completed">{{ item.text }}</a-checkbox>
-          <a-button type="link" danger @click="removeTask(item.id)">Удалить</a-button>
-        </a-list-item>
-      </template>
-    </a-list>
-    <p v-else>Нет задач</p>
+    <NuxtLayout>
+        <NuxtPage />
+    </NuxtLayout>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import 'ant-design-vue/dist/reset.css';
 
-// Массив задач
-const tasks = ref([])
+const isLoading = ref(true)
 
-// Новая задача
-const newTask = ref('')
-
-// Добавление задачи
-function addTask() {
-  if (!newTask.value.trim()) {
-    alert('Введите текст задачи')
-    return
-  }
-
-  tasks.value.push({
-    id: Date.now(),
-    text: newTask.value,
-    completed: false
-  })
-  newTask.value = ''
-}
-
-// Удаление задачи
-function removeTask(taskId) {
-  tasks.value = tasks.value.filter(task => task.id !== taskId)
-}
+onMounted(() => {
+  isLoading.value = false
+})
 </script>
 
-<style scoped>
+<style>
+.spinner {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(255, 255, 255); /* Полупрозрачный фон */
+  z-index: 9999; /* Чтобы спиннер был поверх всего контента */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.spinner-circle {
+  border: 4px solid rgba(0, 0, 0, 0.1);
+  border-left-color: #007bff;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 .todo-app {
   max-width: 600px;
   margin: 50px auto;
-  padding: 20px;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 </style>
