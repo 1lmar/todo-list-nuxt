@@ -7,8 +7,9 @@ services:
       dockerfile: Dockerfile
     container_name: nuxt-app
     ports:
-      - "3001:3001"
+      - "4000:4000"
     environment:
       - NODE_ENV=production
       - BASE_URL=${BASE_URL}
+      - NITRO_PORT=4000
     restart: always
