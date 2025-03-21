@@ -1,21 +1,12 @@
 FROM node:18-alpine AS build
-
 WORKDIR /app
-
-COPY package*.json ./
-
-RUN npm install
-
+COPY package.json package-lock.json ./
+RUN npm install --production
 COPY . .
-
 RUN npm run build
 
-FROM node:18-alpine AS production
+FROM node:18-alpine AS runtime
 WORKDIR /app
-
 COPY --from=build /app/.output ./.output
-COPY --from=build /app/node_modules ./node_modules
-
-EXPOSE 4000
-
+ENV NITRO_PORT=3000
 CMD ["node", ".output/server/index.mjs"]
