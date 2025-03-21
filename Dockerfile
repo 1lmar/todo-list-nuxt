@@ -1,4 +1,4 @@
-FROM node:18-alpine AS base
+FROM node:18-alpine AS build
 
 WORKDIR /app
 
@@ -8,7 +8,6 @@ RUN npm install
 
 COPY . .
 
-FROM base AS build
 RUN npm run build
 
 FROM node:18-alpine AS production
@@ -17,6 +16,6 @@ WORKDIR /app
 COPY --from=build /app/.output ./.output
 COPY --from=build /app/node_modules ./node_modules
 
-EXPOSE 3000
+EXPOSE 4000
 
 CMD ["node", ".output/server/index.mjs"]
