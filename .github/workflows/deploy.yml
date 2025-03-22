@@ -8,6 +8,7 @@ on:
 
 jobs:
   tag_release:
+    if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     outputs:
       new_tag: ${{ steps.create_tag.outputs.new_tag }}
