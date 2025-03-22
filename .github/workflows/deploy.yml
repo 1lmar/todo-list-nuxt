@@ -32,22 +32,13 @@ jobs:
 
       - name: Generate new version
         run: |
-          set -x
           LATEST_TAG="${{ env.latest_tag }}"
           
           if [[ "$LATEST_TAG" == "none" || -z "$LATEST_TAG" ]]; then
             NEW_TAG="v1.0.0"
           else
             CLEAN_TAG="${LATEST_TAG#v}"
-            
-            IFS='.' read -r -a TAG_PARTS <<< "$CLEAN_TAG"
-
-            echo "${TAG_PARTS}"
-            echo "${TAG_PARTS[2]}"
-            
-            ((TAG_PARTS[2]++))
-            
-            NEW_TAG="v${TAG_PARTS[0]}.${TAG_PARTS[1]}.${TAG_PARTS[2]}"
+            NEW_TAG="v$(echo $CLEAN_TAG | awk -F. '{if (NF<3) {print $1"."$2".0"} else {$NF++; print $0}}' OFS=.)"
           fi
 
           echo "New tag: $NEW_TAG"
