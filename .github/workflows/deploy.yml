@@ -11,7 +11,6 @@ on:
 
 jobs:
   tag_release:
-    # if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     outputs:
       new_tag: ${{ steps.create_tag.outputs.new_tag }}
@@ -21,10 +20,13 @@ jobs:
         with:
           persist-credentials: false
 
+      - name: Fetch all tags
+        run: git fetch --tags
+
       - name: Get latest tag
         id: get_latest_tag
         run: |
-          LATEST_TAG=$(git tag -l --sort=-v:refname | head -n 1)
+          LATEST_TAG=$(git tag -l --sort=-v:refname | grep -E '^v[0-9]+\.[0-9]+\.[0-9]+$' | head -n 1)
           echo "Latest tag: $LATEST_TAG"
           echo "latest_tag=$LATEST_TAG" >> $GITHUB_ENV
 
@@ -34,13 +36,26 @@ jobs:
           if [[ -z "$LATEST_TAG" ]]; then
             NEW_TAG="v1.0.0"
           else
-            NEW_TAG=$(echo $LATEST_TAG | awk -F. '{$NF++; print $0}' OFS=.)
+            IFS='.' read -r -a TAG_PARTS <<< "${LATEST_TAG#v}"
+            ((TAG_PARTS[2]++))
+            NEW_TAG="v${TAG_PARTS[0]}.${TAG_PARTS[1]}.${TAG_PARTS[2]}"
           fi
           echo "New tag: $NEW_TAG"
           echo "new_tag=$NEW_TAG" >> $GITHUB_ENV
           echo "::set-output name=new_tag::$NEW_TAG"
 
-      - name: Create new tag
+      - name: Check if tag exists in remote
+        id: check_tag
+        run: |
+          if git ls-remote --tags origin | grep -q "refs/tags/$new_tag$"; then
+            echo "Tag $new_tag already exists. Skipping push."
+            echo "tag_exists=true" >> $GITHUB_ENV
+          else
+            echo "tag_exists=false" >> $GITHUB_ENV
+          fi
+
+      - name: Create and push new tag
+        if: env.tag_exists == 'false'
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
