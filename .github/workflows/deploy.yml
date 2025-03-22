@@ -33,10 +33,10 @@ jobs:
       - name: Generate new version
         id: create_tag
         run: |
-          if [[ -z "$LATEST_TAG" ]]; then
+          if [[ -z "$latest_tag" ]]; then
             NEW_TAG="v1.0.0"
           else
-            IFS='.' read -r -a TAG_PARTS <<< "${LATEST_TAG#v}"
+            IFS='.' read -r -a TAG_PARTS <<< "${latest_tag#v}"
             ((TAG_PARTS[2]++))
             NEW_TAG="v${TAG_PARTS[0]}.${TAG_PARTS[1]}.${TAG_PARTS[2]}"
           fi
