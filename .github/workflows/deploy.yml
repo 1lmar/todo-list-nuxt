@@ -1,10 +1,13 @@
 name: Deploy Nuxt 3 App
 
 on:
-  pull_request:
-    types: [closed]
+  push:
     branches:
       - main
+  # pull_request:
+  #   types: [closed]
+  #   branches:
+  #     - main
 
 jobs:
   tag_release:
