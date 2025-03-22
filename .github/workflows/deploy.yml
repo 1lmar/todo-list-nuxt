@@ -40,7 +40,7 @@ jobs:
 
       - name: Create new tag
         run: |
-          echo "token $GH_PAT"
+          echo "token ${{ secrets.GH_PAT }}"
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git tag $new_tag
