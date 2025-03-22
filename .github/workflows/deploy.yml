@@ -41,6 +41,9 @@ jobs:
             CLEAN_TAG="${LATEST_TAG#v}"
             
             IFS='.' read -r -a TAG_PARTS <<< "$CLEAN_TAG"
+
+            echo "${TAG_PARTS}"
+            echo "${TAG_PARTS[2]}"
             
             ((TAG_PARTS[2]++))
             
