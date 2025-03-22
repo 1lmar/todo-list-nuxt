@@ -37,10 +37,8 @@ jobs:
 
       - name: Create new tag
         run: |
-          git config --global user.email "shakirov_ilmar@mail.ru"
-          git config --global user.name "1lmar"
-          git tag ${{ env.new_tag }}
-          git push origin ${{ env.new_tag }}
+          git tag $VERSION
+          git push https://x-access-token:${{ secrets.GH_PAT }}@github.com/${{ github.repository }}.git $VERSION
 
 
 
