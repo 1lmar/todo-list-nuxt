@@ -31,17 +31,23 @@ jobs:
           echo "latest_tag=$LATEST_TAG" >> $GITHUB_ENV
 
       - name: Generate new version
-        id: create_tag
         run: |
-          if [[ "${{ env.latest_tag }}" == "none" ]]; then
+          LATEST_TAG="${{ env.latest_tag }}"
+          
+          if [[ "$LATEST_TAG" == "none" || -z "$LATEST_TAG" ]]; then
             NEW_TAG="v1.0.0"
           else
-            IFS='.' read -r -a TAG_PARTS <<< "${{ env.latest_tag#v }}"
+            CLEAN_TAG="${LATEST_TAG#v}"
+            
+            IFS='.' read -r -a TAG_PARTS <<< "$CLEAN_TAG"
+            
             ((TAG_PARTS[2]++))
+            
             NEW_TAG="v${TAG_PARTS[0]}.${TAG_PARTS[1]}.${TAG_PARTS[2]}"
           fi
-          echo "new_tag=$NEW_TAG" >> $GITHUB_ENV
+
           echo "New tag: $NEW_TAG"
+          echo "new_tag=$NEW_TAG" >> $GITHUB_ENV
 
       - name: Check if tag exists in remote
         id: check_tag
