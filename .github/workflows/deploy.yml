@@ -32,6 +32,7 @@ jobs:
 
       - name: Generate new version
         run: |
+          set -x
           LATEST_TAG="${{ env.latest_tag }}"
           
           if [[ "$LATEST_TAG" == "none" || -z "$LATEST_TAG" ]]; then
