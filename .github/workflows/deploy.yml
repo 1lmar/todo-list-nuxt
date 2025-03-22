@@ -33,6 +33,7 @@ jobs:
       - name: Generate new version
         id: create_tag
         run: |
+          echo "$latest_tag"
           if [[ -z "$latest_tag" ]]; then
             NEW_TAG="v1.0.0"
           else
